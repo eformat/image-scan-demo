@@ -1,7 +1,19 @@
 #!/usr/bin/groovy
 
+// Global Variables
+properties([
+    [$class: 'ParametersDefinitionProperty', parameterDefinitions: [
+        [$class: 'StringParameterDefinition', name: 'STI_IMAGE_NAME', defaultValue: 'openshift/php-56-rhel7:5.6-14', description: "STI Builder image name"],
+        [$class: 'StringParameterDefinition', name: 'GIT_BRANCH', defaultValue: 'master', description: "Git Branch (from Multibranch plugin if being used)"],        
+    ]]
+])
+
+
 node {
-    def branch = "${env.BRANCH_NAME}"
+    if( "${env.BRANCH_NAME}" != null && "${env.BRANCH_NAME}" != "") {
+        GIT_BRANCH = "${env.BRANCH_NAME}"
+    } 
+    def branch = "${GIT_BRANCH}"
     branch = branch.toLowerCase()
     echo "Build Number is: ${env.BUILD_NUMBER}"
     echo "Branch name is: ${env.BRANCH_NAME}"
@@ -33,7 +45,7 @@ node {
         } else {
             echo 'Creating app'
             try {
-                sh "oc new-app ${source} --name=${name} --labels=app=${name} --strategy=source || echo 'app exists'"
+                sh "oc new-app ${STI_IMAGE_NAME}~${source} --name=${name} --labels=app=${name} --strategy=source || echo 'app exists'"
             } catch(Exception e) {
                 echo "new-app exists"
             }
