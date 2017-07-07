@@ -16,7 +16,7 @@ node {
     def branch = "${GIT_BRANCH}"
     branch = branch.toLowerCase()
     echo "Build Number is: ${env.BUILD_NUMBER}"
-    echo "Branch name is: ${env.BRANCH_NAME}"
+    echo "Branch Name is: ${branch}"
     echo "Job Name is: ${env.JOB_NAME}"
     def commit_id, source, origin_url, name
     stage ('Initialise') {
