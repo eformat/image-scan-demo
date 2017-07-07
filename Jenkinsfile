@@ -10,10 +10,10 @@ properties([
 
 
 node {
+    def branch = "${GIT_BRANCH}"    
     if( "${env.BRANCH_NAME}" != null || "${env.BRANCH_NAME}" != "") {
-        GIT_BRANCH = "${env.BRANCH_NAME}"
+        branch = "${env.BRANCH_NAME}"
     } 
-    def branch = "${GIT_BRANCH}"
     branch = branch.toLowerCase()
     echo "Build Number is: ${env.BUILD_NUMBER}"
     echo "Branch Name is: ${branch}"
