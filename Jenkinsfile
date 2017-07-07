@@ -3,30 +3,24 @@
 // Global Variables
 properties([
     [$class: 'ParametersDefinitionProperty', parameterDefinitions: [
-        [$class: 'StringParameterDefinition', name: 'STI_IMAGE_NAME', defaultValue: 'openshift/php-56-rhel7:5.6-14', description: "STI Builder image name"],
-        [$class: 'StringParameterDefinition', name: 'GIT_BRANCH', defaultValue: 'master', description: "Git Branch (from Multibranch plugin if being used)"],        
-    ]]
+        [$class: 'StringParameterDefinition', name: 'STI_IMAGE_NAME', defaultValue: 'openshift/php-56-rhel7:5.6-14', description: "STI Builder image name"]    ]]
 ])
 
-
 node {
-    def branch = "${GIT_BRANCH}"    
-    if( "${env.BRANCH_NAME}" != null || "${env.BRANCH_NAME}" != "") {
-        branch = "${env.BRANCH_NAME}"
-    } 
-    branch = branch.toLowerCase()
     echo "Build Number is: ${env.BUILD_NUMBER}"
-    echo "Branch Name is: ${branch}"
     echo "Job Name is: ${env.JOB_NAME}"
-    def commit_id, source, origin_url, name
+    def commit_id, source, origin_url, branch, name
     stage ('Initialise') {
-        // Checkout code from repository - we want commit id and name
+        // Checkout code from repository - we want commit id, name and branch
         checkout scm
         dir ("${WORKSPACE}") {
             commit_id = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim() 
             echo "Git Commit is: ${commit_id}"
             def cmd0 = $/name=$(git config --local remote.origin.url); name=$${name##*/}; echo $${name%%.git}/$
             name = sh(returnStdout: true, script: cmd0).trim()
+            def cmd5 = $/br=$(git rev-parse --abbrev-ref HEAD)/}; echo $${br}/$            
+            branch = sh(returnStdout: true, script: cmd5).trim()
+            branch = branch.toLowerCase()
             name = "${name}-${branch}"
             echo "Name is: ${name}"
         }
