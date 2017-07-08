@@ -35,7 +35,7 @@ node {
             echo 'Building image'
             def build = getBuildName(name)
             setBuildRef(build, origin_url, commit_id)
-            setBuildImage(build, ${STI_IMAGE_NAME})          
+            setBuildImage(build, "${STI_IMAGE_NAME}")
             openshiftBuild(buildConfig: build, showBuildLogs: 'true')
         } else {
             echo 'Creating app'
