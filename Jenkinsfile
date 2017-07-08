@@ -3,7 +3,7 @@
 // Global Variables
 properties([
     [$class: 'ParametersDefinitionProperty', parameterDefinitions: [
-        [$class: 'StringParameterDefinition', name: 'STI_IMAGE_NAME', defaultValue: 'openshift/php-56-rhel7:5.6-14', description: "STI Builder image name"]    ]]
+        [$class: 'StringParameterDefinition', name: 'STI_IMAGE_NAME', defaultValue: 'php-56-rhel7:5.6-14', description: "STI Builder image name"]    ]]
 ])
 
 node {
