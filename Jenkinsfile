@@ -18,7 +18,7 @@ node {
             echo "Git Commit is: ${commit_id}"
             def cmd0 = $/name=$(git config --local remote.origin.url); name=$${name##*/}; echo $${name%%.git}/$
             name = sh(returnStdout: true, script: cmd0).trim()
-            def cmd5 = $/br=$(git rev-parse --abbrev-ref HEAD)/}; echo $${br}/$            
+            def cmd5 = $/git rev-parse --abbrev-ref HEAD/$            
             branch = sh(returnStdout: true, script: cmd5).trim()
             branch = branch.toLowerCase()
             name = "${name}-${branch}"
