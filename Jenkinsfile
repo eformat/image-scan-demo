@@ -18,8 +18,8 @@ node {
             echo "Git Commit is: ${commit_id}"
             def cmd0 = $/name=$(git config --local remote.origin.url); name=$${name##*/}; echo $${name%%.git}/$
             name = sh(returnStdout: true, script: cmd0).trim()
-            def cmd5 = $/git rev-parse --abbrev-ref HEAD/$            
-            branch = sh(returnStdout: true, script: cmd5).trim()
+            def cmd1 = $/git rev-parse --abbrev-ref HEAD/$            
+            branch = sh(returnStdout: true, script: cmd1).trim()
             branch = branch.toLowerCase()
             name = "${name}-${branch}"
             echo "Name is: ${name}"
@@ -34,7 +34,8 @@ node {
         if(getBuildName(name)) {
             echo 'Building image'
             def build = getBuildName(name)
-            setBuildRef(build, origin_url, commit_id)            
+            setBuildRef(build, origin_url, commit_id)
+            setBuildImage(build, ${STI_IMAGE_NAME})          
             openshiftBuild(buildConfig: build, showBuildLogs: 'true')
         } else {
             echo 'Creating app'
@@ -70,28 +71,33 @@ def createRoute(String name) {
 
 // Get Build Name
 def getBuildName(String name) {
-    def cmd1 = $/buildconfig=$(oc get bc -l app=${name} -o name);echo $${buildconfig##buildconfig*/}/$
-    bld = sh(returnStdout: true, script: cmd1).trim()    
+    def cmd2 = $/buildconfig=$(oc get bc -l app=${name} -o name);echo $${buildconfig##buildconfig*/}/$
+    bld = sh(returnStdout: true, script: cmd2).trim()    
     return bld
 }
 
 // Get Deploy Config Name
 def getDeployName(String name) {
-    def cmd2 = $/deploymentconfig=$(oc get dc -l app=${name} -o name);echo $${deploymentconfig##deploymentconfig*/}/$
-    dply = sh(returnStdout: true, script: cmd2).trim()    
+    def cmd3 = $/deploymentconfig=$(oc get dc -l app=${name} -o name);echo $${deploymentconfig##deploymentconfig*/}/$
+    dply = sh(returnStdout: true, script: cmd3).trim()    
     return dply
 }
 
 // Get Service Name
 def getServiceName(String name) {
-    def cmd3 = $/service=$(oc get svc -l app=${name} -o name);echo $${service##service*/}/$
-    svc = sh(returnStdout: true, script: cmd3).trim()        
+    def cmd4 = $/service=$(oc get svc -l app=${name} -o name);echo $${service##service*/}/$
+    svc = sh(returnStdout: true, script: cmd4).trim()        
     return svc
 }
 
 // Set Build Ref
 def setBuildRef(String build, String source, String commit_id) {
-    def cmd4 = $/oc patch bc/"${build}" -p $'{\"spec\":{\"source\":{\"git\":{\"uri\":\"${source}\",\"ref\": \"${commit_id}\"}}}}$'/$
-    sh cmd4
+    def cmd5 = $/oc patch bc/"${build}" -p $'{\"spec\":{\"source\":{\"git\":{\"uri\":\"${source}\",\"ref\": \"${commit_id}\"}}}}$'/$
+    sh cmd5
 }
 
+// Set Build Image
+def setBuildImage(String build, String image) {
+    def cmd6 = $/oc patch bc/"${build}" -p $'{\"spec\":{\"strategy\":{\"sourceStrategy\":{\"from\":{\"name\":\"${image}\"}}}}}$'/$    
+    sh cmd6
+}
