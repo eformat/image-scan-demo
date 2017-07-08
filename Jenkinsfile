@@ -98,6 +98,6 @@ def setBuildRef(String build, String source, String commit_id) {
 
 // Set Build Image
 def setBuildImage(String build, String image) {
-    def cmd6 = $/oc patch bc/"${build}" -p $'{\"spec\":{\"strategy\":{\"sourceStrategy\":{\"from\":{\"name\":\"${image}\"}}}}}$'/$    
+    def cmd6 = $/oc patch bc/"${build}" -p $'{\"spec\":{\"strategy\":{\"sourceStrategy\":{\"from\":{\"name\": \"${image}\"}}}}}$'/$
     sh cmd6
 }
