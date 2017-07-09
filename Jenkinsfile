@@ -29,6 +29,22 @@ node {
         echo "Source URL is: ${source}"
     }
 
+    stage ('Scan') {
+        // Scan code and CVE check
+        updateCodeDeps()
+        if (containsCVE()) {
+            echo "CVE's found"
+            timeout(time: 2, unit: 'DAYS') {
+                def userInput = input(
+                    id: 'userInput', message: 'CVE\'s found, Continue ?', parameters: [
+                        [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Continue on CVE', name: 'Continue on CVE']) 
+            }
+        }
+        if (performance == false) {
+            currentBuild.result = 'FAILURE'
+        }
+    }
+
     stage ('Build') {
         // Start Build or Create initial app if doesn't exist
         if(getBuildName(name)) {
@@ -100,4 +116,20 @@ def setBuildRef(String build, String source, String commit_id) {
 def setBuildImage(String build, String image) {
     def cmd6 = $/oc patch bc/"${build}" -p $'{\"spec\":{\"strategy\":{\"sourceStrategy\":{\"from\":{\"name\": \"${image}\"}}}}}$'/$
     sh cmd6
+}
+
+// Update code deps
+def updateCodeDeps() {
+    def cmd7 = $/php tools/composer.phar update/$
+    sh cmd7
+}
+
+// Scan code deps for CVE's
+def containsCVE() {
+    def cmd7 = $/php tools/security-checker.phar security:check ./composer.lock/$
+    check = sh(returnStdout: true, script: cmd7).trim()
+    if (check.grep(~/CVE/)) {
+        return true;
+    }
+    return false;
 }
