@@ -37,7 +37,7 @@ node {
             timeout(time: 2, unit: 'DAYS') {
                 def userInput = input(
                     id: 'userInput', message: 'CVE\'s found, Continue ?', parameters: [
-                        [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Continue on CVE', name: 'Continue on CVE']) 
+                        [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Continue on CVE', name: 'Continue on CVE']]) 
             }
         }
         if (performance == false) {
