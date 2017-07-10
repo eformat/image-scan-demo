@@ -40,7 +40,7 @@ node {
                         [$class: 'BooleanParameterDefinition', defaultValue: false, description: 'Continue on CVE', name: 'Continue on CVE']]) 
             }
         }
-        if (performance == false) {
+        if (userInput == false) {
             currentBuild.result = 'FAILURE'
         }
     }
