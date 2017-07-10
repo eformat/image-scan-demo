@@ -127,6 +127,7 @@ def updateCodeDeps() {
 // Scan code deps for CVE's
 def containsCVE() {
     def cmd7 = $/php tools/security-checker.phar security:check ./composer.lock/$
+    def check
     try {
         check = sh(returnStdout: true, script: cmd7).trim()
     } catch(Exception e) {
