@@ -127,7 +127,7 @@ def containsCVE() {
     def cmd7 = $/curl -s -H 'Accept: text/plain'  https://security.sensiolabs.org/check_lock -F lock=@composer.lock/$    
     cve = sh(returnStdout: true, script: cmd7)
     echo "$cve";
-    if (cve.matches(/CVE/)) {
+    if (cve =~ /CVE/) {
         return true;
     }
     return false;
