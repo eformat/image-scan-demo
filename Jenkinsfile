@@ -124,11 +124,11 @@ def updateCodeDeps() {
 // Scan code deps for CVE's
 def containsCVE() {
     // def cmd7 = $/php tools/security-checker.phar security:check ./composer.lock/$
-    def cmd7 = $/curl -H 'Accept: text/plain'  https://security.sensiolabs.org/check_lock -F lock=@composer.lock 2>&1/$
-    try {
-        sh(returnStdout: true, script: cmd7)
-    } catch(Exception e) {
+    def cmd7 = $/curl -s -H 'Accept: text/plain'  https://security.sensiolabs.org/check_lock -F lock=@composer.lock/$    
+    cve = sh(returnStdout: true, script: cmd7)
+    echo "$cve";
+    if (cve.matches(/CVE/)) {
         return true;
-    }            
+    }
     return false;
 }
